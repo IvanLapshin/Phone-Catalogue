@@ -1,6 +1,6 @@
 'use strict';
 
-class PhonesPage {
+class PhonePage {
 	constructor(options) {
 		this._el = options.el;
 
