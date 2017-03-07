@@ -5,8 +5,11 @@
   <title>Title</title>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
   <link rel="stylesheet" href="app.css">
-  <script src="js/phone-page.js" defer></script>
-  <script src="js/phone-catalogue.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.min.js"></script>
+  <script src="js/shopping-cart.js"></script>
+  <script src="js/phone-page.js"></script>
+  <script src="js/phone-catalogue.js"></script>
   <script src="js/app.js" defer></script>
 </head>
 <body>
@@ -29,16 +32,10 @@
         </select>
       </p>
 
-      <div>
-        <h3>Shopping cart</h3>
-        <ul class="selected-phones">
-          <li>1</li>
-          <li>2</li>
-          <li>3</li>
-        </ul>
-      </div>
+      <div data-component="shoppingCart"></div>
+
     </div>
-    
+
     <div class="col-md-10">
       <!--Body content-->
 
@@ -47,6 +44,33 @@
     </div>
   </div>
 </div>
+
+<script type="text" id="shopping-cart-template">
+  <h3>Shopping cart</h3>
+  <ul class="selected-phones">
+    <% orderItems.forEach( (item) => { %>
+      <li><%- item %></li>
+    <% }); %>
+  </ul>
+
+  <% if (orderItems.length === 0) { %>
+    <p>No items yet!</p>
+  <% } %>
+</script>
+
+<script type="text" id="phone-catalogue-template">
+  <ul class="phones">
+    <% phones.forEach( (phone) => { %>
+      <li class="thumbnail phones__item" data-element="phoneItem" data-phone-id="<%= phone.id %>">
+        <a href="#!/phones/<%= phone.id %>" class="thumb" data-element="phoneItemLink">
+          <img alt="<%- phone.name %>" src="<%= phone.imageUrl %>">
+        </a>
+        <a href="#!/phones/<%= phone.id %>" data-element="phoneItemLink"><%- phone.name %></a>
+        <p><%- phone.snippet %></p>
+      </li> 
+    <% }); %>
+  </ul>  
+</script>
 
 </body>
 </html>

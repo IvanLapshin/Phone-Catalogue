@@ -1,6 +1,6 @@
 'use strict';
 
-const PHONES = [
+const phonesFromServer = [
     {
         "age": 0, 
         "id": "motorola-xoom-with-wi-fi", 
@@ -156,43 +156,46 @@ const PHONES = [
     }];
 
 class PhoneCatalogue {
-	constructor(options) {
-		this._el = options.el;
-	
-		this._render();
+  constructor(options) {
+    this._el = options.el;
+  
+    this._render();
 
-		this._el.addEventListener('click', this._onPhoneItemClick.bind(this));
-	}
+    this._el.addEventListener('click', this._onPhoneClick.bind(this));
+  }
 
-	_render() {
-		let html = '<ul class="phones__list">';
+  on(eventName, handler) {
+    this._el.addEventListener(eventName, handler);
+  }
 
-		PHONES.forEach( (phone) => {
-			html += ` 
-			    <li class="thumbnail phones__item" data-element="phoneItem" data-phone-id="${phone.id}">
-	          <a href="#!/phones/${phone.id}" class="thumb" data-element="phoneItemLink">
-	            <img alt="${phone.name}" src="${phone.imageUrl}">
-	          </a>
-	          <a href="#!/phones/${phone.id}" data-element="phoneItemLink">${phone.name}</a>
-	          <p>${phone.snippet}</p>
-	        </li> 
-	      `;
-		});
+  off(eventName, handler) {
+    this._el.removeEventListener(eventName, handler);
+  }
 
-    html += '</ul>';
+  _trigger(eventName, data) {
+    let myEvent = new CustomEvent(eventName, {
+      detail: data
+    });
 
-    this._el.innerHTML = html;
-	}
+    this._el.dispatchEvent(myEvent);
+  }
 
-	_onPhoneItemClick(event) {
-		let phoneItemLink = event.target.closest('[data-element="phoneItemLink"]');
+  _render() {
+    let template = document.querySelector('#phone-catalogue-template').innerHTML;
+    let compiled = _.template(template);
 
-		if (!phoneItemLink) {
-			return;
-		}
+    this._el.innerHTML = compiled({phones: phonesFromServer});
+  }
+
+  _onPhoneClick(event) {
+    let phoneItemLink = event.target.closest('[data-element="phoneItemLink"]');
+
+    if (!phoneItemLink) {
+      return;
+    }
 
     let selectedPhoneItem = phoneItemLink.closest('[data-element="phoneItem"');
 
-		alert(selectedPhoneItem.dataset.phoneId);
-	}
+    this._trigger('phoneSelected', selectedPhoneItem.dataset.phoneId);
+  }
 }
